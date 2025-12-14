@@ -28,6 +28,7 @@
             padding: 30px;
             max-width: 400px;
             width: 100%;
+            position: relative;
         }
 
         .display {
@@ -105,9 +106,109 @@
         .zero {
             grid-column: span 2;
         }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50px;
+            width: 60px;
+            height: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            padding: 3px;
+            z-index: 1000;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .theme-toggle-slider {
+            width: 24px;
+            height: 24px;
+            background: #ffffff;
+            border-radius: 50%;
+            transition: transform 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .theme-toggle.dark .theme-toggle-slider {
+            transform: translateX(30px);
+        }
+
+        /* Темная тема */
+        body.dark {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+
+        body.dark .calculator {
+            background: #2d2d44;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        body.dark .display {
+            background: #1a1a1a;
+            color: #ffffff;
+        }
+
+        body.dark button {
+            background: #3d3d5c;
+            color: #e0e0e0;
+        }
+
+        body.dark button:hover {
+            background: #4d4d6c;
+        }
+
+        body.dark .operator {
+            background: #667eea;
+            color: #ffffff;
+        }
+
+        body.dark .operator:hover {
+            background: #5568d3;
+        }
+
+        body.dark .equals {
+            background: #764ba2;
+            color: #ffffff;
+        }
+
+        body.dark .equals:hover {
+            background: #653a8a;
+        }
+
+        body.dark .clear {
+            background: #ff6b6b;
+            color: #ffffff;
+        }
+
+        body.dark .clear:hover {
+            background: #ee5a5a;
+        }
+
+        body.dark .theme-toggle {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        body.dark .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
     </style>
 </head>
 <body>
+    <div class="theme-toggle" id="themeToggle" onclick="toggleTheme()">
+        <div class="theme-toggle-slider">🌙</div>
+    </div>
     <div class="calculator">
         <div class="display" id="display">0</div>
         <div class="buttons">
@@ -140,6 +241,45 @@
         let display = document.getElementById('display');
         let currentInput = '0';
         let shouldResetDisplay = false;
+
+        // Инициализация темы
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            const body = document.body;
+            const themeToggle = document.getElementById('themeToggle');
+            
+            if (savedTheme === 'dark') {
+                body.classList.add('dark');
+                themeToggle.classList.add('dark');
+                themeToggle.querySelector('.theme-toggle-slider').textContent = '☀️';
+            } else {
+                body.classList.remove('dark');
+                themeToggle.classList.remove('dark');
+                themeToggle.querySelector('.theme-toggle-slider').textContent = '🌙';
+            }
+        }
+
+        // Переключение темы
+        function toggleTheme() {
+            const body = document.body;
+            const themeToggle = document.getElementById('themeToggle');
+            const slider = themeToggle.querySelector('.theme-toggle-slider');
+            
+            if (body.classList.contains('dark')) {
+                body.classList.remove('dark');
+                themeToggle.classList.remove('dark');
+                slider.textContent = '🌙';
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.classList.add('dark');
+                themeToggle.classList.add('dark');
+                slider.textContent = '☀️';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Инициализация при загрузке страницы
+        initTheme();
 
         function updateDisplay() {
             display.textContent = currentInput;
